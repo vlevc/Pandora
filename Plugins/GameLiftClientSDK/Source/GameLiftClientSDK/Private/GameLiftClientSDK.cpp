@@ -10,11 +10,11 @@
 
 #define LOCTEXT_NAMESPACE "FGameLiftClientSDKModule"
 
-void* FGameLiftClientSDKModule::CrtCppDll = nullptr;
-void* FGameLiftClientSDKModule::CEventDll = nullptr;
-void* FGameLiftClientSDKModule::CCommonDll = nullptr;
-void* FGameLiftClientSDKModule::ChecksumDll = nullptr;
+//void* FGameLiftClientSDKModule::CEventDll = nullptr;
+//void* FGameLiftClientSDKModule::CCommonDll = nullptr;
+//void* FGameLiftClientSDKModule::ChecksumDll = nullptr;
 void* FGameLiftClientSDKModule::CoreDll = nullptr;
+void* FGameLiftClientSDKModule::GameLiftDll = nullptr;
 
 TSet<void*> FGameLiftClientSDKModule::ValidDllHandles = TSet<void*>();
 
@@ -28,6 +28,7 @@ void FGameLiftClientSDKModule::StartupModule()
 
     FWindowsPlatformProcess::AddDllDirectory(*DllDir);
 
+    /*
     const FString CCommonName = "aws-c-common";
     const FString CCommonPath = FPaths::Combine(DllDir, CCommonName) + TEXT(".") + FPlatformProcess::GetModuleExtension();
     if (!FGameLiftClientSDKModule::LoadDll(CCommonPath, FGameLiftClientSDKModule::CCommonDll, CCommonName)) {
@@ -45,10 +46,17 @@ void FGameLiftClientSDKModule::StartupModule()
     if (!FGameLiftClientSDKModule::LoadDll(CEventPath, FGameLiftClientSDKModule::CEventDll, CEventName)) {
         FGameLiftClientSDKModule::FreeAllDll();
     }
+    */
 
     const FString CoreName = "aws-cpp-sdk-core";
     const FString CorePath = FPaths::Combine(DllDir, CoreName) + TEXT(".") + FPlatformProcess::GetModuleExtension();
-    if (!FGameLiftClientSDKModule::LoadDll(CorePath, FGameLiftClientSDKModule::CEventDll, CoreName)) {
+    if (!FGameLiftClientSDKModule::LoadDll(CorePath, FGameLiftClientSDKModule::CoreDll, CoreName)) {
+        FGameLiftClientSDKModule::FreeAllDll();
+    }
+
+    const FString GameLiftName = "aws-cpp-sdk-gamelift";
+    const FString GameLiftPath = FPaths::Combine(DllDir, GameLiftName) + TEXT(".") + FPlatformProcess::GetModuleExtension();
+    if (!FGameLiftClientSDKModule::LoadDll(GameLiftPath, FGameLiftClientSDKModule::GameLiftDll, GameLiftName)) {
         FGameLiftClientSDKModule::FreeAllDll();
     }
 #endif
@@ -98,9 +106,9 @@ void FGameLiftClientSDKModule::FreeDll(void*& dll_ptr) {
 void FGameLiftClientSDKModule::FreeAllDll() {
     //Free all the current valid dll's
     for (auto dll : FGameLiftClientSDKModule::ValidDllHandles) {
-        FGameLiftClientSDKModule::ValidDllHandles.Remove(dll);
         FGameLiftClientSDKModule::FreeDll(dll);
     }
+    FGameLiftClientSDKModule::ValidDllHandles.Reset();
 }
 
 #undef LOCTEXT_NAMESPACE

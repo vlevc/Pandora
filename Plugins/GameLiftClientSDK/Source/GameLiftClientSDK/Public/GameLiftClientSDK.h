@@ -16,11 +16,11 @@ public:
 private:
 	/** Handle to the external dll we will load */
 	static TSet<void*> ValidDllHandles;
-	static void* CrtCppDll;
-	static void* CEventDll;
-	static void* CCommonDll;
-	static void* ChecksumDll;
+//	static void* CEventDll;
+//	static void* CCommonDll;
+//	static void* ChecksumDll;
 	static void* CoreDll;
+	static void* GameLiftDll;
 
 	Aws::SDKOptions initialOptions;
 
