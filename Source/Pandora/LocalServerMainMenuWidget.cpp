@@ -2,6 +2,7 @@
 
 
 #include "LocalServerMainMenuWidget.h"
+#include "GameLiftClientSDK.h"
 
 ULocalServerMainMenuWidget::ULocalServerMainMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -12,5 +13,8 @@ ULocalServerMainMenuWidget::ULocalServerMainMenuWidget(const FObjectInitializer&
 
 void ULocalServerMainMenuWidget::OnDescribeGameSessions()
 {
+	//Getting the module first.
+	FGameLiftClientSDKModule* gameLiftSdkModule = &FModuleManager::LoadModuleChecked<FGameLiftClientSDKModule>(FName("GameLiftClientSDK"));
 
+	gameLiftSdkModule->DescribeGameSessions();
 }

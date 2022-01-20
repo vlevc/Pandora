@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include <memory>
 #include "LocalServerMainMenuWidget.generated.h"
 
 /**

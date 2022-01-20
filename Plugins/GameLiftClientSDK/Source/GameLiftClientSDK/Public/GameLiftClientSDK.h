@@ -3,7 +3,13 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+#include <string>
 #include "aws/core/Aws.h"
+#include "aws/gamelift/GameLiftClient.h"
+
+namespace Aws {
+	struct SDKOptions;
+}
 
 class FGameLiftClientSDKModule : public IModuleInterface
 {
@@ -13,21 +19,22 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
+	virtual void DescribeGameSessions();
+
 private:
 	/** Handle to the external dll we will load */
 	static TSet<void*> ValidDllHandles;
-//	static void* CEventDll;
-//	static void* CCommonDll;
-//	static void* ChecksumDll;
-	static void* CoreDll;
-	static void* GameLiftDll;
 
 	Aws::SDKOptions initialOptions;
 
+	void LoadAwsLibrary(const FString libraryName, const FString DllDir);
 
-	bool LoadDll(const FString path, void*& dll_ptr, const FString name);
+	bool LoadDll(const FString path, const FString name);
 
 	void FreeDll(void*& dll_ptr);
 
 	void FreeAllDll();
+
+	void __InitAPI();
+	void __ShutdownAPI();
 };

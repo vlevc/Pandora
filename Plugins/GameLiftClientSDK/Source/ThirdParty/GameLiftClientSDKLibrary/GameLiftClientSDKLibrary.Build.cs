@@ -20,11 +20,23 @@ public class GameLiftClientSDKLibrary : ModuleRules
 			PublicLibraryPaths.Add(WindowPath);
 
 			System.Console.WriteLine("----------------------------------------------------------------");
-			System.Console.WriteLine("WindowPath : {0}", WindowPath);
+			System.Console.WriteLine("WindowPath : {0}", WindowPath); 
 
 			// Add the import library
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-http.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-io.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-mqtt.lib"));
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-cpp-sdk-core.lib"));
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-cpp-sdk-gamelift.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-crt-cpp.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-s3.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-auth.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-cal.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-common.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-compression.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-c-event-stream.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Win64", "aws-checksums.lib"));
+
 
 			// Delay-load the DLL, so we can load it from the right place first
 			RuntimeDependencies.Add(System.IO.Path.Combine(WindowPath, "aws-c-http.dll"));
