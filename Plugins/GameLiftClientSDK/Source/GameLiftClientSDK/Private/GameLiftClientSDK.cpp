@@ -49,7 +49,7 @@ void FGameLiftClientSDKModule::StartupModule()
     //If we are on a windows platform we need to Load the DLL's
     UE_LOG(LogTemp, Display, TEXT("Start Loading AWS Base DLL's"));
     const FString PluginDir = IPluginManager::Get().FindPlugin("GameLiftClientSdk")->GetBaseDir();
-    const FString DllDir = FPaths::Combine(*PluginDir, TEXT("Source"), TEXT("ThirdParty"), TEXT("GameLiftClientSDKLibrary"), TEXT("Win64"));
+    const FString DllDir = FPaths::Combine(*PluginDir, TEXT("ThirdParty"), TEXT("GameLiftClientSDK"), TEXT("Win64"));
 
     FWindowsPlatformProcess::AddDllDirectory(*DllDir);
 
