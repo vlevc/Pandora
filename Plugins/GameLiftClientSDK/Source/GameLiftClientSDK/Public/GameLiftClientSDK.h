@@ -3,11 +3,10 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
-#include "aws/core/Aws.h"
 
-namespace Aws {
-	struct SDKOptions;
-}
+#if WITH_GAMELIFT_CLIENT
+#include "aws/core/Aws.h"
+#endif
 
 class FGameLiftClientSDKModule : public IModuleInterface
 {
@@ -23,7 +22,9 @@ private:
 	/** Handle to the external dll we will load */
 	static TSet<void*> ValidDllHandles;
 
+#if WITH_GAMELIFT_CLIENT
 	Aws::SDKOptions initialOptions;
+#endif
 
 	void LoadAwsLibrary(const FString libraryName, const FString DllDir);
 

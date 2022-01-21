@@ -1,5 +1,6 @@
 #include "Serializer.h"
 
+#if WITH_GAMELIFT_CLIENT
 
 #include "aws/core/Aws.h"
 
@@ -58,3 +59,5 @@ FString* AWSSerializer::PAStoPFS(Aws::String* s) {
 
 	return rv;
 }
+
+#endif

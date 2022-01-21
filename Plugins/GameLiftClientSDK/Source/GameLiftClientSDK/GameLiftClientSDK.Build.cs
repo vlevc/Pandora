@@ -32,6 +32,7 @@ public class GameLiftClientSDK : ModuleRules
 			{
 				if (Target.Type == TargetRules.TargetType.Editor || Target.Type == TargetRules.TargetType.Client)
 				{
+					System.Console.WriteLine("------------------> WITH_GAMELIFT_CLIENT=1");
 					PublicDefinitions.Add("WITH_GAMELIFT_CLIENT=1");
 					if (Target.Platform == UnrealTargetPlatform.Win64)
                     {

@@ -1,12 +1,16 @@
 #pragma once
 
+#if WITH_GAMELIFT_CLIENT
+
 //#include "CoreMinimal.h"
 //#include "Credentials.h"
 //#include "ClientConfiguration.h"
 
-#include "aws/core/client/AWSClient.h"
-#include "aws/core/auth/AWSCredentials.h"
-#include "aws/core/client/ClientConfiguration.h"
+#include "aws/core/Aws.h"
+
+//#include "aws/core/client/AWSClient.h"
+//#include "aws/core/auth/AWSCredentials.h"
+//#include "aws/core/client/ClientConfiguration.h"
 
 class AWSSerializer {
 
@@ -267,3 +271,5 @@ TSet<UT>  AWSSerializer::AwsVectortoTSet(Aws::Vector<AT> in_array, UT* (*valueCo
 
 	return out_array;
 }
+
+#endif

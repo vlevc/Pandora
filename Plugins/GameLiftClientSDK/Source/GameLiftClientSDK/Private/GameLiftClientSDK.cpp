@@ -7,16 +7,19 @@
 #include "Misc/Paths.h"
 #include "HAL/UnrealMemory.h"
 
+#if WITH_GAMELIFT_CLIENT
 #include "aws/core/utils/logging/LogLevel.h"
 #include "aws/core/utils/memory/MemorySystemInterface.h"
 #include "aws/core/client/ClientConfiguration.h"
 #include "aws/gamelift/GameLiftClient.h"
 #include "aws/gamelift/model/DescribeGameSessionsRequest.h"
+#endif
 
 #include "Serializer.h"
 
 #define LOCTEXT_NAMESPACE "FGameLiftClientSDKModule"
 
+#if WITH_GAMELIFT_CLIENT
 
 class UEMemoryManager : public Aws::Utils::Memory::MemorySystemInterface
 {
@@ -33,6 +36,8 @@ public:
 
 static UEMemoryManager ue4MemoryManager;
 
+#endif
+
 TSet<void*> FGameLiftClientSDKModule::ValidDllHandles = TSet<void*>();
 
 void FGameLiftClientSDKModule::LoadAwsLibrary(const FString libraryName, const FString DllDir)
@@ -45,7 +50,7 @@ void FGameLiftClientSDKModule::LoadAwsLibrary(const FString libraryName, const F
 
 void FGameLiftClientSDKModule::StartupModule()
 {
-#if PLATFORM_WINDOWS && PLATFORM_64BITS
+#if WITH_GAMELIFT_CLIENT && PLATFORM_WINDOWS && PLATFORM_64BITS
     //If we are on a windows platform we need to Load the DLL's
     UE_LOG(LogTemp, Display, TEXT("Start Loading AWS Base DLL's"));
     const FString PluginDir = IPluginManager::Get().FindPlugin("GameLiftClientSdk")->GetBaseDir();
@@ -67,7 +72,6 @@ void FGameLiftClientSDKModule::StartupModule()
     //LoadAwsLibrary("aws-c-cal", DllDir);
     //LoadAwsLibrary("aws-checksums", DllDir);
     //LoadAwsLibrary("aws-c-compression", DllDir); 
-#endif
 
     Aws::SDKOptions* pInitialOptions = new Aws::SDKOptions();
 
@@ -78,12 +82,17 @@ void FGameLiftClientSDKModule::StartupModule()
 
     //The AWS SDK for C++ must be initialized by calling Aws::InitAPI.
     Aws::InitAPI(initialOptions);
+#endif
+
 }
 
 void FGameLiftClientSDKModule::ShutdownModule()
 {
+
+#if WITH_GAMELIFT_CLIENT
     //Before the application terminates, the SDK must be shut down. 
     Aws::ShutdownAPI(initialOptions);
+#endif
 
 #if PLATFORM_WINDOWS && PLATFORM_64BITS
     FGameLiftClientSDKModule::FreeAllDll();
@@ -123,6 +132,7 @@ void FGameLiftClientSDKModule::FreeAllDll() {
 
 void FGameLiftClientSDKModule::DescribeGameSessions()
 {
+#if WITH_GAMELIFT_CLIENT
     Aws::Client::ClientConfiguration clientConfig;
     Aws::GameLift::GameLiftClient gameLiftClient(clientConfig);
 
@@ -132,6 +142,7 @@ void FGameLiftClientSDKModule::DescribeGameSessions()
     Aws::GameLift::Model::DescribeGameSessionsRequest gameSessionsRequest;
     gameSessionsRequest.SetFleetId("fleet-1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
     auto result = gameLiftClient.DescribeGameSessions(gameSessionsRequest);
+#endif
 }
 
 #undef LOCTEXT_NAMESPACE
