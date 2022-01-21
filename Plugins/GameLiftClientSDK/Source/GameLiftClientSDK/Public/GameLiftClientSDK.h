@@ -5,6 +5,10 @@
 #include "Modules/ModuleManager.h"
 #include "aws/core/Aws.h"
 
+namespace Aws {
+	struct SDKOptions;
+}
+
 class FGameLiftClientSDKModule : public IModuleInterface
 {
 public:
@@ -13,21 +17,20 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
+	virtual void DescribeGameSessions();
+
 private:
 	/** Handle to the external dll we will load */
 	static TSet<void*> ValidDllHandles;
-	static void* CrtCppDll;
-	static void* CEventDll;
-	static void* CCommonDll;
-	static void* ChecksumDll;
-	static void* CoreDll;
 
 	Aws::SDKOptions initialOptions;
 
+	void LoadAwsLibrary(const FString libraryName, const FString DllDir);
 
-	bool LoadDll(const FString path, void*& dll_ptr, const FString name);
+	bool LoadDll(const FString path, const FString name);
 
 	void FreeDll(void*& dll_ptr);
 
 	void FreeAllDll();
+
 };
