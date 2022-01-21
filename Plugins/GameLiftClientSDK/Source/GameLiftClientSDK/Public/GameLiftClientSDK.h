@@ -3,9 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
-#include <string>
 #include "aws/core/Aws.h"
-#include "aws/gamelift/GameLiftClient.h"
 
 namespace Aws {
 	struct SDKOptions;
@@ -35,6 +33,4 @@ private:
 
 	void FreeAllDll();
 
-	void __InitAPI();
-	void __ShutdownAPI();
 };

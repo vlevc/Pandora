@@ -8,8 +8,6 @@
 #include "aws/core/auth/AWSCredentials.h"
 #include "aws/core/client/ClientConfiguration.h"
 
-void __DescribeGameSessions();
-
 class AWSSerializer {
 
 public:

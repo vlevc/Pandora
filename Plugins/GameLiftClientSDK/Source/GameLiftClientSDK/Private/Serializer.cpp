@@ -2,24 +2,6 @@
 
 
 #include "aws/core/Aws.h"
-#include "aws/gamelift/GameLiftClient.h"
-#include "aws/gamelift/model/DescribeGameSessionsRequest.h"
-#include "aws/core/utils/logging/LogLevel.h"
-
-void __DescribeGameSessions() {
-	Aws::Client::ClientConfiguration clientConfig;
-	Aws::GameLift::GameLiftClient gameLiftClient(clientConfig);
-
-	//std::basic_string<char, std::char_traits<char>, std::allocator<char>> endpoint(TCHAR_TO_UTF8("http://localhost:9080"));
-	//const Aws::String endpoint("http://localhost:9080");
-
-	Aws::String awsEndpoint("http://localhost:9080");
-	gameLiftClient.OverrideEndpoint(awsEndpoint);
-		
-	Aws::GameLift::Model::DescribeGameSessionsRequest gameSessionsRequest;
-	gameSessionsRequest.SetFleetId(TCHAR_TO_UTF8("fleet-1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"));
-	auto result = gameLiftClient.DescribeGameSessions(gameSessionsRequest);
-}
 
 Aws::String AWSSerializer::FStoAS(FString s) {
 	return Aws::String(TCHAR_TO_UTF8(*s));

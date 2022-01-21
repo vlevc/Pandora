@@ -5,14 +5,16 @@
 //#include "HAL/PlatformProcess.h"
 #include "Interfaces/IPluginManager.h"
 #include "Misc/Paths.h"
-//#include "aws/core/Aws.h"
-#include "aws/core/client/ClientConfiguration.h"
-//#include "aws/gamelift/GameLiftClient.h"
-#include "aws/gamelift/model/DescribeGameSessionsRequest.h"
+#include "HAL/UnrealMemory.h"
+
 #include "aws/core/utils/logging/LogLevel.h"
 #include "aws/core/utils/memory/MemorySystemInterface.h"
-#include "HAL/UnrealMemory.h"
+#include "aws/core/client/ClientConfiguration.h"
+#include "aws/gamelift/GameLiftClient.h"
+#include "aws/gamelift/model/DescribeGameSessionsRequest.h"
+
 #include "Serializer.h"
+
 #define LOCTEXT_NAMESPACE "FGameLiftClientSDKModule"
 
 
@@ -54,25 +56,34 @@ void FGameLiftClientSDKModule::StartupModule()
     LoadAwsLibrary("aws-cpp-sdk-core", DllDir); 
     LoadAwsLibrary("aws-cpp-sdk-gamelift", DllDir);
 
-    LoadAwsLibrary("aws-crt-cpp", DllDir);
-    LoadAwsLibrary("aws-c-event-stream", DllDir);
-    LoadAwsLibrary("aws-c-common", DllDir);
-    LoadAwsLibrary("aws-c-mqtt", DllDir);
-    LoadAwsLibrary("aws-c-s3", DllDir);
-    LoadAwsLibrary("aws-c-auth", DllDir);
-    LoadAwsLibrary("aws-c-http", DllDir);
-    LoadAwsLibrary("aws-c-io", DllDir);
-    LoadAwsLibrary("aws-c-cal", DllDir);
-    LoadAwsLibrary("aws-checksums", DllDir);
-    LoadAwsLibrary("aws-c-compression", DllDir); 
+    //LoadAwsLibrary("aws-crt-cpp", DllDir);
+    //LoadAwsLibrary("aws-c-event-stream", DllDir);
+    //LoadAwsLibrary("aws-c-common", DllDir);
+    //LoadAwsLibrary("aws-c-mqtt", DllDir);
+    //LoadAwsLibrary("aws-c-s3", DllDir);
+    //LoadAwsLibrary("aws-c-auth", DllDir);
+    //LoadAwsLibrary("aws-c-http", DllDir);
+    //LoadAwsLibrary("aws-c-io", DllDir);
+    //LoadAwsLibrary("aws-c-cal", DllDir);
+    //LoadAwsLibrary("aws-checksums", DllDir);
+    //LoadAwsLibrary("aws-c-compression", DllDir); 
 #endif
 
-    __InitAPI();
+    Aws::SDKOptions* pInitialOptions = new Aws::SDKOptions();
+
+    //The Aws::SDKOptions struct contains SDK configuration options.
+    //An instance of Aws::SDKOptions is passed to the Aws::InitAPI and 
+    //Aws::ShutdownAPI methods.  The same instance should be sent to both methods.
+    initialOptions.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
+
+    //The AWS SDK for C++ must be initialized by calling Aws::InitAPI.
+    Aws::InitAPI(initialOptions);
 }
 
 void FGameLiftClientSDKModule::ShutdownModule()
 {
-    __ShutdownAPI();
+    //Before the application terminates, the SDK must be shut down. 
+    Aws::ShutdownAPI(initialOptions);
 
 #if PLATFORM_WINDOWS && PLATFORM_64BITS
     FGameLiftClientSDKModule::FreeAllDll();
@@ -110,34 +121,8 @@ void FGameLiftClientSDKModule::FreeAllDll() {
     FGameLiftClientSDKModule::ValidDllHandles.Reset();
 }
 
-void FGameLiftClientSDKModule::__InitAPI()
-{
-    Aws::SDKOptions* pInitialOptions = new Aws::SDKOptions();
-
-    //initialOptions = std::make_unique<Aws::SDKOptions>();
-
-    //The Aws::SDKOptions struct contains SDK configuration options.
-    //An instance of Aws::SDKOptions is passed to the Aws::InitAPI and 
-    //Aws::ShutdownAPI methods.  The same instance should be sent to both methods.
-    initialOptions.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
-
-    initialOptions.memoryManagementOptions.memoryManager = &ue4MemoryManager;
-
-    //The AWS SDK for C++ must be initialized by calling Aws::InitAPI.
-    Aws::InitAPI(initialOptions);
-}
-
-void FGameLiftClientSDKModule::__ShutdownAPI()
-{
-    //Before the application terminates, the SDK must be shut down. 
-    Aws::ShutdownAPI(initialOptions);
-}
-
-
 void FGameLiftClientSDKModule::DescribeGameSessions()
 {
-    __DescribeGameSessions();
-/*
     Aws::Client::ClientConfiguration clientConfig;
     Aws::GameLift::GameLiftClient gameLiftClient(clientConfig);
 
@@ -145,9 +130,8 @@ void FGameLiftClientSDKModule::DescribeGameSessions()
     gameLiftClient.OverrideEndpoint(testString);
 
     Aws::GameLift::Model::DescribeGameSessionsRequest gameSessionsRequest;
-    gameSessionsRequest.SetFleetId(Aws::String("fleet-1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"));
+    gameSessionsRequest.SetFleetId("fleet-1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
     auto result = gameLiftClient.DescribeGameSessions(gameSessionsRequest);
-*/
 }
 
 #undef LOCTEXT_NAMESPACE
