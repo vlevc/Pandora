@@ -6,11 +6,18 @@
 //#include "Credentials.h"
 //#include "ClientConfiguration.h"
 
-#include "aws/core/Aws.h"
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#endif
 
+#include "aws/core/Aws.h"
 //#include "aws/core/client/AWSClient.h"
 //#include "aws/core/auth/AWSCredentials.h"
 //#include "aws/core/client/ClientConfiguration.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
 
 class AWSSerializer {
 

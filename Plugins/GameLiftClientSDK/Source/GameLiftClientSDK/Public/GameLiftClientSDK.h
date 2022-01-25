@@ -5,7 +5,17 @@
 #include "Modules/ModuleManager.h"
 
 #if WITH_GAMELIFT_CLIENT
+
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#endif
+
 #include "aws/core/Aws.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
+
 #endif
 
 class FGameLiftClientSDKModule : public IModuleInterface
@@ -26,9 +36,9 @@ private:
 	Aws::SDKOptions initialOptions;
 #endif
 
-	void LoadAwsLibrary(const FString libraryName, const FString DllDir);
+	void LoadAwsLibrary(const FString libraryName);
 
-	bool LoadDll(const FString path, const FString name);
+	bool LoadDll(const FString name);
 
 	void FreeDll(void*& dll_ptr);
 

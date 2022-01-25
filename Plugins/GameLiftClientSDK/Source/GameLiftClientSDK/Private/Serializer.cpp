@@ -2,12 +2,10 @@
 
 #if WITH_GAMELIFT_CLIENT
 
-#include "aws/core/Aws.h"
-
 Aws::String AWSSerializer::FStoAS(FString s) {
 	return Aws::String(TCHAR_TO_UTF8(*s));
 }
-
+ 
 FString AWSSerializer::AStoFS(Aws::String s) {
 	return FString(s.c_str());
 }

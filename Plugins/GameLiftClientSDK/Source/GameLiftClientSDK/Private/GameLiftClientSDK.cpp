@@ -8,14 +8,22 @@
 #include "HAL/UnrealMemory.h"
 
 #if WITH_GAMELIFT_CLIENT
+
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#endif
+
 #include "aws/core/utils/logging/LogLevel.h"
 #include "aws/core/utils/memory/MemorySystemInterface.h"
 #include "aws/core/client/ClientConfiguration.h"
 #include "aws/gamelift/GameLiftClient.h"
 #include "aws/gamelift/model/DescribeGameSessionsRequest.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/HideWindowsPlatformTypes.h"
 #endif
 
-#include "Serializer.h"
+#endif
 
 #define LOCTEXT_NAMESPACE "FGameLiftClientSDKModule"
 
@@ -40,10 +48,10 @@ static UEMemoryManager ue4MemoryManager;
 
 TSet<void*> FGameLiftClientSDKModule::ValidDllHandles = TSet<void*>();
 
-void FGameLiftClientSDKModule::LoadAwsLibrary(const FString libraryName, const FString DllDir)
+void FGameLiftClientSDKModule::LoadAwsLibrary(const FString libraryName)
 {
-    const FString libraryPath = FPaths::Combine(DllDir, libraryName) + TEXT(".") + FPlatformProcess::GetModuleExtension();
-    if (!FGameLiftClientSDKModule::LoadDll(libraryPath, libraryName)) {
+    if (!FGameLiftClientSDKModule::LoadDll(libraryName)) {
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT(LOCTEXT_NAMESPACE, "Failed to load AWS library. Plug-in will not be functional."));
         FGameLiftClientSDKModule::FreeAllDll();
     }
 }
@@ -51,27 +59,16 @@ void FGameLiftClientSDKModule::LoadAwsLibrary(const FString libraryName, const F
 void FGameLiftClientSDKModule::StartupModule()
 {
 #if WITH_GAMELIFT_CLIENT && PLATFORM_WINDOWS && PLATFORM_64BITS
-    //If we are on a windows platform we need to Load the DLL's
-    UE_LOG(LogTemp, Display, TEXT("Start Loading AWS Base DLL's"));
-    const FString PluginDir = IPluginManager::Get().FindPlugin("GameLiftClientSdk")->GetBaseDir();
-    const FString DllDir = FPaths::Combine(*PluginDir, TEXT("ThirdParty"), TEXT("GameLiftClientSDK"), TEXT("Win64"));
 
-    FWindowsPlatformProcess::AddDllDirectory(*DllDir);
+    //LoadAwsLibrary(TEXT("aws-cpp-sdk-core.dll"));
+    //LoadAwsLibrary(TEXT("aws-cpp-sdk-gamelift.dll"));
 
-    LoadAwsLibrary("aws-cpp-sdk-core", DllDir); 
-    LoadAwsLibrary("aws-cpp-sdk-gamelift", DllDir);
+    void* dll_ptr = FPlatformProcess::GetDllHandle(TEXT("aws-cpp-sdk-core.dll"));
+    FGameLiftClientSDKModule::ValidDllHandles.Add(dll_ptr);
+    dll_ptr = FPlatformProcess::GetDllHandle(TEXT("aws-cpp-sdk-gamelift.dll"));
+    FGameLiftClientSDKModule::ValidDllHandles.Add(dll_ptr);
 
-    //LoadAwsLibrary("aws-crt-cpp", DllDir);
-    //LoadAwsLibrary("aws-c-event-stream", DllDir);
-    //LoadAwsLibrary("aws-c-common", DllDir);
-    //LoadAwsLibrary("aws-c-mqtt", DllDir);
-    //LoadAwsLibrary("aws-c-s3", DllDir);
-    //LoadAwsLibrary("aws-c-auth", DllDir);
-    //LoadAwsLibrary("aws-c-http", DllDir);
-    //LoadAwsLibrary("aws-c-io", DllDir);
-    //LoadAwsLibrary("aws-c-cal", DllDir);
-    //LoadAwsLibrary("aws-checksums", DllDir);
-    //LoadAwsLibrary("aws-c-compression", DllDir); 
+    // AWS ---------------
 
     Aws::SDKOptions* pInitialOptions = new Aws::SDKOptions();
 
@@ -82,6 +79,7 @@ void FGameLiftClientSDKModule::StartupModule()
 
     //The AWS SDK for C++ must be initialized by calling Aws::InitAPI.
     Aws::InitAPI(initialOptions);
+
 #endif
 
 }
@@ -99,17 +97,17 @@ void FGameLiftClientSDKModule::ShutdownModule()
 #endif
 }
 
-bool FGameLiftClientSDKModule::LoadDll(const FString path, const FString name) {
+bool FGameLiftClientSDKModule::LoadDll(const FString name) {
     //load the passed in dll and if it successeds then add it to the valid set
-    UE_LOG(LogTemp, Error, TEXT("Attempting to load DLL %s from %s"), *name, *path);
-    void* dll_ptr = FPlatformProcess::GetDllHandle(*path);
+    UE_LOG(LogTemp, Error, TEXT("Attempting to load DLL %s"), *name);
+    void* dll_ptr = FPlatformProcess::GetDllHandle(*name);
 
     if (dll_ptr == nullptr) {
-        UE_LOG(LogTemp, Error, TEXT("Could not load %s from %s"), *name, *path);
+        UE_LOG(LogTemp, Error, TEXT("Could not load %s"), *name);
         return false;
     }
 
-    UE_LOG(LogTemp, Display, TEXT("Loaded %s from %s"), *name, *path);
+    UE_LOG(LogTemp, Display, TEXT("Loaded %s"), *name);
     FGameLiftClientSDKModule::ValidDllHandles.Add(dll_ptr);
     return true;
 }
